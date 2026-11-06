@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <org.fossify.commons.views.MyAppBarLayout
+        android:id="@+id/advanced_editor_appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/advanced_editor_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:menu="@menu/menu_advanced_editor"
+            app:title="@string/advanced_editor" />
+    </org.fossify.commons.views.MyAppBarLayout>
+
+    <LinearLayout
+        android:id="@+id/advanced_editor_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#202020">
+
+            <org.fossify.gallery.views.AdvancedEditorView
+                android:id="@+id/advanced_editor_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/editor_image_description" />
+
+            <com.canhub.cropper.CropImageView
+                android:id="@+id/advanced_editor_crop"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                app:cropInitialCropWindowPaddingRatio="0"
+                app:cropGuidelines="on" />
+
+            <ProgressBar
+                android:id="@+id/advanced_editor_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/advanced_editor_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityLiveRegion="polite"
+            android:gravity="center"
+            android:padding="8dp" />
+
+        <LinearLayout
+            android:id="@+id/advanced_editor_ink_controls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/advanced_editor_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/editor_ink_color" />
+
+            <SeekBar
+                android:id="@+id/advanced_editor_ink_size"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/editor_ink_size"
+                android:max="100"
+                android:progress="20" />
+
+            <Button
+                android:id="@+id/advanced_editor_done"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/editor_done" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/advanced_editor_crop_controls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/advanced_editor_cancel_crop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/advanced_editor_aspect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/screen_rotation_aspect_ratio" />
+
+            <Button
+                android:id="@+id/advanced_editor_apply_crop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/editor_apply_crop" />
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:id="@+id/advanced_editor_tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/advanced_editor_tool_buttons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/advanced_editor_crop_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/crop" />
+
+                <Button
+                    android:id="@+id/advanced_editor_rotate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rotate" />
+
+                <Button
+                    android:id="@+id/advanced_editor_flip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/editor_flip" />
+
+                <Button
+                    android:id="@+id/advanced_editor_resize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/editor_resize" />
+
+                <Button
+                    android:id="@+id/advanced_editor_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/editor_add_text" />
+
+                <Button
+                    android:id="@+id/advanced_editor_draw"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/draw" />
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
