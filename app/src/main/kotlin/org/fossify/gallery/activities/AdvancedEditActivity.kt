@@ -238,7 +238,11 @@ class AdvancedEditActivity : SimpleActivity() {
 
     private fun changeHistory(change: (EditHistory) -> EditHistory) {
         val current = history ?: return
-        selectTool(AdvancedEditorView.Tool.NONE)
+        if (binding.advancedEditorImage.tool == AdvancedEditorView.Tool.DRAW) {
+            binding.advancedEditorImage.cancelGesture()
+        } else {
+            selectTool(AdvancedEditorView.Tool.NONE)
+        }
         val next = change(current)
         if (next != current) render(next)
     }
