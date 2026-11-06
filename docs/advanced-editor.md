@@ -12,6 +12,10 @@ Cropper plus Android bitmap/Canvas APIs. No proprietary editor SDK is required.
   Text wraps at the image's right edge. It cannot be moved after insertion.
 - **Draw:** use the round brush, with adjustable color and width. Tap **Done**
   to leave drawing mode.
+- **Zoom:** pinch with two fingers to zoom up to 16×; move both fingers to pan.
+  With drawing/text tools closed, one finger also pans. Choose **Fit image** in
+  the overflow menu to reset the view. Zoom stays in place while drawing and
+  undoing/redoing annotations; edits that change image dimensions reset the view.
 - Toolbar **Undo/Redo** works across all tools, including individual strokes
   and text insertions. A new edit after undo discards the redo branch.
 - The checkmark exports the current edit. JPEG, PNG and WebP filenames are

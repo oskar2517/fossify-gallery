@@ -13,10 +13,11 @@
     <string name="editor_apply_crop">Apply crop</string>
     <string name="editor_crop_free">Free</string>
     <string name="editor_crop_hint">Drag the edges to crop, then tap Apply crop.</string>
-    <string name="editor_text_hint">Tap the image to place your text. Undo removes it.</string>
-    <string name="editor_draw_hint">Draw on the image. Each stroke can be undone.</string>
+    <string name="editor_text_hint">Tap the image to place your text. Use two fingers to zoom or pan.</string>
+    <string name="editor_draw_hint">Draw with one finger. Use two fingers to zoom or pan.</string>
+    <string name="editor_fit_image">Fit image</string>
     <string name="editor_dimensions">%1$d × %2$d px</string>
-    <string name="editor_image_description">Image being edited</string>
+    <string name="editor_image_description">Image being edited. Pinch to zoom and use two fingers to pan.</string>
     <string name="editor_discard_title">Discard edits?</string>
     <string name="editor_discard_message">Your edits have not been saved.</string>
     <string name="editor_overwrite_message">Replace the original image with the edited image?</string>

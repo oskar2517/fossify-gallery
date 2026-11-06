@@ -17,6 +17,10 @@
         android:title="@string/save_as"
         app:showAsAction="always" />
     <item
+        android:id="@+id/editor_fit_image"
+        android:title="@string/editor_fit_image"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/overwrite_original"
         android:title="@string/overwrite_original"
         app:showAsAction="never" />

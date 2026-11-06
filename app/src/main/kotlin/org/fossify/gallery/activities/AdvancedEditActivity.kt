@@ -118,12 +118,13 @@ class AdvancedEditActivity : SimpleActivity() {
         loadImage()
     }
 
-    private fun setupActions() = with(binding) {
+    private fun setupMenuActions() = with(binding) {
         advancedEditorToolbar.setOnMenuItemClickListener { item ->
             if (busy || cropping) return@setOnMenuItemClickListener true
             when (item.itemId) {
                 R.id.editor_undo -> changeHistory { it.undo() }
                 R.id.editor_redo -> changeHistory { it.redo() }
+                R.id.editor_fit_image -> advancedEditorImage.resetZoom()
                 R.id.save_as -> saveAs()
                 R.id.overwrite_original -> overwriteOriginal()
                 else -> return@setOnMenuItemClickListener false
@@ -131,6 +132,10 @@ class AdvancedEditActivity : SimpleActivity() {
             true
         }
         advancedEditorToolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
+    }
+
+    private fun setupActions() = with(binding) {
+        setupMenuActions()
         advancedEditorCropButton.setOnClickListener { startCrop() }
         advancedEditorRotate.setOnClickListener { commit(EditOperation.Rotate()) }
         advancedEditorFlip.setOnClickListener {
@@ -342,6 +347,7 @@ class AdvancedEditActivity : SimpleActivity() {
             item.icon?.alpha = if (item.isEnabled) ICON_ENABLED_ALPHA else ICON_DISABLED_ALPHA
         }
         menu.findItem(R.id.save_as).isEnabled = ready
+        menu.findItem(R.id.editor_fit_image).isEnabled = ready
         menu.findItem(R.id.overwrite_original).apply {
             isEnabled = ready
             isVisible = outputUri() == null

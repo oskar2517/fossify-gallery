@@ -5,15 +5,15 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import org.fossify.gallery.editor.EditOperation
 import org.fossify.gallery.editor.EditPoint
 import org.fossify.gallery.editor.EditRenderer
 import org.fossify.gallery.editor.EditSize
-import kotlin.math.min
+import org.fossify.gallery.editor.EditorViewport
 
 class AdvancedEditorView(context: Context, attrs: AttributeSet? = null) : View(context, attrs) {
     enum class Tool { NONE, DRAW, TEXT }
@@ -29,7 +29,9 @@ class AdvancedEditorView(context: Context, attrs: AttributeSet? = null) : View(c
     var onTextPosition: ((EditPoint) -> Unit)? = null
     private var bitmap: Bitmap? = null
     private var logicalSize = EditSize(1, 1)
-    private val imageBounds = RectF()
+    private val viewport = EditorViewport()
+    private val navigation = EditorNavigationGesture(viewport, ViewConfiguration.get(context).scaledTouchSlop.toFloat())
+    private val imageBounds get() = viewport.bounds
     private val points = ArrayList<EditPoint>()
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
     private var gestureColor = inkColor
@@ -45,7 +47,14 @@ class AdvancedEditorView(context: Context, attrs: AttributeSet? = null) : View(c
 
     fun cancelGesture() {
         points.clear()
+        navigation.reset()
         parent?.requestDisallowInterceptTouchEvent(false)
+        invalidate()
+    }
+
+    fun resetZoom() {
+        cancelGesture()
+        viewport.reset()
         invalidate()
     }
 
@@ -55,13 +64,7 @@ class AdvancedEditorView(context: Context, attrs: AttributeSet? = null) : View(c
     }
 
     private fun updateBounds() {
-        val scale = min(width.toFloat() / logicalSize.width, height.toFloat() / logicalSize.height)
-        val imageWidth = logicalSize.width * scale
-        val imageHeight = logicalSize.height * scale
-        imageBounds.set(
-            (width - imageWidth) / 2, (height - imageHeight) / 2,
-            (width + imageWidth) / 2, (height + imageHeight) / 2
-        )
+        viewport.layout(width, height, logicalSize)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -77,43 +80,44 @@ class AdvancedEditorView(context: Context, attrs: AttributeSet? = null) : View(c
         }
     }
 
-    private fun imagePoint(x: Float, y: Float) = EditPoint(
-        ((x - imageBounds.left) / imageBounds.width() * logicalSize.width).coerceIn(0f, logicalSize.width.toFloat()),
-        ((y - imageBounds.top) / imageBounds.height() * logicalSize.height).coerceIn(0f, logicalSize.height.toFloat())
-    )
-
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!isEnabled || bitmap == null) return false
-        if (tool == Tool.NONE || imageBounds.isEmpty) return false
+        if (imageBounds.isEmpty) return false
+        val navigating = navigation.onTouchEvent(event, allowSingleFingerPan = tool == Tool.NONE)
+        if (navigating) points.clear()
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                if (!imageBounds.contains(event.x, event.y)) return false
                 parent?.requestDisallowInterceptTouchEvent(true)
                 gestureColor = inkColor
                 gestureWidth = brushWidth
                 points.clear()
-                points.add(imagePoint(event.x, event.y))
-            }
-
-            MotionEvent.ACTION_MOVE -> {
-                if (points.isEmpty()) return true
-                if (tool == Tool.DRAW) {
-                    for (index in 0 until event.historySize) {
-                        points.add(imagePoint(event.getHistoricalX(index), event.getHistoricalY(index)))
-                    }
-                    points.add(imagePoint(event.x, event.y))
+                if (tool != Tool.NONE && imageBounds.contains(event.x, event.y)) {
+                    points.add(viewport.imagePoint(event.x, event.y))
                 }
             }
 
+            MotionEvent.ACTION_MOVE -> continueStroke(event)
+
             MotionEvent.ACTION_UP -> {
-                finishGesture(imagePoint(event.x, event.y))
-                performClick()
+                if (!navigating) {
+                    finishGesture(viewport.imagePoint(event.x, event.y))
+                    performClick()
+                }
+                cancelGesture()
             }
 
-            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_POINTER_DOWN -> cancelGesture()
+            MotionEvent.ACTION_CANCEL -> cancelGesture()
         }
         invalidate()
         return true
+    }
+
+    private fun continueStroke(event: MotionEvent) {
+        if (tool != Tool.DRAW || points.isEmpty()) return
+        for (index in 0 until event.historySize) {
+            points.add(viewport.imagePoint(event.getHistoricalX(index), event.getHistoricalY(index)))
+        }
+        points.add(viewport.imagePoint(event.x, event.y))
     }
 
     private fun finishGesture(position: EditPoint) {
